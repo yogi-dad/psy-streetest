@@ -6,7 +6,12 @@ type Answer = {
   answerValue: number | null;
 };
 
-export function PssForm({ onFormComplete }: { onFormComplete: (score: number, answers: Answer[]) => void }) {
+type PssFormProps = {
+  onFormComplete: (score: number, answers: Answer[]) => Promise<void> | void;
+  isSubmitting?: boolean;
+};
+
+export function PssForm({ onFormComplete, isSubmitting = false }: PssFormProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>(
     pssQuestions.map((q) => ({
@@ -14,7 +19,6 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
       answerValue: null,
     }))
   );
-  const [showResult, setShowResult] = useState(false);
 
   const currentQuestion = pssQuestions[currentQuestionIndex];
   const currentAnswer = answers.find((a) => a.questionId === currentQuestion.id)?.answerValue ?? null;
@@ -24,6 +28,10 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
   const isLastQuestion = currentQuestionIndex === pssQuestions.length - 1;
 
   const handleAnswer = (value: number) => {
+    if (isSubmitting) {
+      return;
+    }
+
     setAnswers((prev) =>
       prev.map((a) => (a.questionId === currentQuestion.id ? { ...a, answerValue: value } : a))
     );
@@ -42,17 +50,12 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
   };
 
   const handleSubmit = () => {
-    if (!isAllAnswered) {
+    if (!isAllAnswered || isSubmitting) {
       return;
     }
 
-    setShowResult(true);
     onFormComplete(totalScore, answers);
   };
-
-  if (showResult) {
-    return null;
-  }
 
   const progress = ((currentQuestionIndex + 1) / pssQuestions.length) * 100;
   const stressLevel = totalScore <= 10 ? 'Low' : totalScore <= 25 ? 'Moderate' : 'High';
@@ -91,7 +94,13 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
       </div>
 
       <div className="w-full max-w-2xl">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          {isSubmitting && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-2xl bg-white/85 backdrop-blur-sm">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600" />
+              <p className="text-sm font-semibold text-gray-700">Submitting your assessment...</p>
+            </div>
+          )}
           <div className="mb-6">
             <span className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold">
               Question {currentQuestionIndex + 1}
@@ -109,11 +118,12 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
                 <button
                   key={option.value}
                   onClick={() => handleAnswer(option.value)}
+                  disabled={isSubmitting}
                   className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium ${
                     isSelected
                       ? 'border-primary-600 bg-primary-50 text-primary-900 shadow-md scale-105'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-primary-300 hover:bg-primary-50'
-                  }`}
+                  } disabled:cursor-not-allowed disabled:opacity-60`}
                 >
                   <div className="flex items-center">
                     <div
@@ -141,28 +151,28 @@ export function PssForm({ onFormComplete }: { onFormComplete: (score: number, an
           <div className="flex items-center justify-between gap-4">
             <button
               onClick={handlePrev}
-              disabled={currentQuestionIndex === 0}
+              disabled={currentQuestionIndex === 0 || isSubmitting}
               className="px-6 py-2 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Previous
             </button>
 
             <div className="text-sm text-gray-500">
-              {currentAnswer !== null ? 'Answered' : 'Select an option'}
+              {isSubmitting ? 'Submitting...' : currentAnswer !== null ? 'Answered' : 'Select an option'}
             </div>
 
             {isLastQuestion ? (
               <button
                 onClick={handleSubmit}
-                disabled={!isAllAnswered}
+                disabled={!isAllAnswered || isSubmitting}
                 className="px-6 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                Submit
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </button>
             ) : (
               <button
                 onClick={handleNext}
-                disabled={currentAnswer === null}
+                disabled={currentAnswer === null || isSubmitting}
                 className="px-6 py-2 rounded-lg bg-primary-600 text-white font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 Next

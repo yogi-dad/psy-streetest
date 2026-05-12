@@ -2,15 +2,3 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
-[[functions]]
-  path = "submit-pss-result"
-  function = "submit-pss-result"
-
-# Set function environment variables
-[[functions]]
-  path = "*"
-  environment = {
-    NODE_ENV = "production",
-    FIREBASE_PROJECT_ID = ""
-  }
