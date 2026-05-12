@@ -1,0 +1,36 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+
+# Set environment variables
+[functions.environment]
+  NODE_ENV = "production"
+  FIREBASE_PROJECT_ID = ""
+
+[[functions.environment]]
+  function = "submit-pss-result"
+  key = "GOOGLE_SERVICE_ACCOUNT_KEY"
+  value = "your_service_account_key_here"
+
+[[functions.environment]]
+  function = "submit-pss-result"
+  key = "GOOGLE_SHEET_ID"
+  value = "your_sheet_id_here"
+
+[[functions.environment]]
+  function = "submit-pss-result"
+  key = "EMAIL_USER"
+  value = "your_email@example.com"
+
+[[functions.environment]]
+  function = "submit-pss-result"
+  key = "EMAIL_PASSWORD"
+  value = "your_app_password"
+
+[[functions.environment]]
+  function = "submit-pss-result"
+  key = "EMAIL_FROM"
+  value = "noreply@your-domain.com"
