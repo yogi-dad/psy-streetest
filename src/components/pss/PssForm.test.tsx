@@ -1,94 +1,48 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { PssForm } from './PssForm';
 
-// Mock constants
-vi.mock('../../constants/pssQuestions', () => ({
-  pssQuestions: [
-    { id: 1, text: 'Question 1', reverseScore: false },
-    { id: 2, text: 'Question 2', reverseScore: false },
-  ],
-  initialAnswers: [
-    { questionId: 1, answerValue: 0 },
-    { questionId: 2, answerValue: 0 },
-  ],
-}));
+describe('PssForm', () => {
+  it('renders the first question and initial progress state', () => {
+    render(<PssForm onFormComplete={vi.fn()} />);
 
-describe('PssForm Component', () => {
-  const mockOnFormComplete = vi.fn();
-
-  it('renders all questions', () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
-
-    expect(screen.getByText('Question 1')).toBeInTheDocument();
-    expect(screen.getByText('Question 2')).toBeInTheDocument();
+    expect(screen.getByText('Question 1 of 10')).toBeInTheDocument();
+    expect(screen.getByText('Answered: 0')).toBeInTheDocument();
+    expect(screen.getByText('Score: 0')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
   });
 
-  it('renders progress preview section', () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
+  it('enables moving forward after selecting an answer', () => {
+    render(<PssForm onFormComplete={vi.fn()} />);
 
-    expect(screen.getByText('Your Score Preview')).toBeInTheDocument();
-    expect(screen.getByText('You\'ve answered 0 of 2 questions')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Sometimes' }));
+
+    expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled();
+    expect(screen.getByText('Answered: 1')).toBeInTheDocument();
+    expect(screen.getByText('Score: 2')).toBeInTheDocument();
   });
 
-  it('renders current score display', () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
+  it('submits the completed questionnaire with the total score', () => {
+    const onFormComplete = vi.fn();
+    render(<PssForm onFormComplete={onFormComplete} />);
 
-    expect(screen.getByText('0')).toBeInTheDocument();
-  });
+    for (let index = 0; index < 10; index += 1) {
+      fireEvent.click(screen.getByRole('button', { name: 'Sometimes' }));
 
-  it('calls onFormComplete when all questions are answered', async () => {
-    const mockOnFormComplete = vi.fn();
+      const nextButton = screen.queryByRole('button', { name: 'Next' });
+      if (nextButton) {
+        fireEvent.click(nextButton);
+      }
+    }
 
-    // Answer question 1
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: '2' },
-    });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
-    // Answer question 2
-    const question2Select = screen.getAllByRole('combobox')[1];
-    fireEvent.change(question2Select, {
-      target: { value: '1' },
-    });
-
-    // Wait for completion
-    await waitFor(() => {
-      expect(mockOnFormComplete).toHaveBeenCalled();
-    });
-  });
-
-  it('updates completed question count', async () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
-
-    // Answer question 1
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: '2' },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('You\'ve answered 1 of 2 questions')).toBeInTheDocument();
-    });
-  });
-
-  it('displays score category', () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
-
-    expect(screen.getByText('Low Stress')).toBeInTheDocument();
-  });
-
-  it('shows disclaimer at bottom', () => {
-    render(<PssForm onFormComplete={mockOnFormComplete} />);
-
-    expect(
-      screen.getByText(
-        'This assessment is for personal use only. Consult a healthcare professional for medical advice.'
-      )
-    ).toBeInTheDocument();
-  });
-
-  it('has gradient header', () => {
-    const { container } = render(<PssForm onFormComplete={mockOnFormComplete} />);
-    const header = container.querySelector('[class*="gradient"]');
-    expect(header).toBeInTheDocument();
+    expect(onFormComplete).toHaveBeenCalledWith(
+      20,
+      expect.arrayContaining([
+        { questionId: 1, answerValue: 2 },
+        { questionId: 10, answerValue: 2 },
+      ])
+    );
   });
 });

@@ -1,3 +1,5 @@
+import type { Demographics } from '../types/demographics';
+
 const SCRIPT_URL = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '';
 
 export interface GoogleScriptSubmissionResult {
@@ -6,8 +8,51 @@ export interface GoogleScriptSubmissionResult {
   error?: string;
 }
 
+export interface GoogleScriptPrevalidationResult {
+  success: boolean;
+  canSubmit?: boolean;
+  exists?: boolean;
+  message?: string;
+  error?: string;
+}
+
+export async function prevalidateAssessmentEmail(email: string): Promise<GoogleScriptPrevalidationResult> {
+  if (!SCRIPT_URL) {
+    console.warn('VITE_GOOGLE_APPS_SCRIPT_URL not configured');
+    return {
+      success: false,
+      error: 'Google Apps Script URL not configured',
+    };
+  }
+
+  try {
+    const url = new URL(SCRIPT_URL);
+    url.searchParams.set('action', 'prevalidate');
+    url.searchParams.set('email', email);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: 'Failed to prevalidate email',
+      };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error prevalidating assessment email:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to prevalidate email',
+    };
+  }
+}
+
 export async function submitAssessmentToGoogleScript(
-  email: string,
+  demographics: Demographics,
   score: number,
   answers: unknown[]
 ): Promise<GoogleScriptSubmissionResult> {
@@ -22,7 +67,7 @@ export async function submitAssessmentToGoogleScript(
   try {
     const timestamp = new Date().toISOString();
     const payload = {
-      email,
+      ...demographics,
       score,
       answers,
       timestamp,

@@ -1,80 +1,90 @@
+import type { PSSAnswer } from '../types/pss';
+
 export const pssQuestions = [
   {
     id: 1,
-    text: "During the past month, how often have you felt that you were unable to control the important things in your life?",
+    text: 'In the last month, how often have you been upset because of something that happened unexpectedly?',
     reverseScore: false,
   },
   {
     id: 2,
-    text: "During the past month, how often have you felt nervous and stressed?",
+    text: 'In the last month, how often have you felt that you were unable to control the important things in your life?',
     reverseScore: false,
   },
   {
     id: 3,
-    text: "During the past month, how often have you felt lonely?",
+    text: 'In the last month, how often have you felt nervous and stressed?',
     reverseScore: false,
   },
   {
     id: 4,
-    text: "During the past month, how often have you felt afraid as if something bad might happen?",
-    reverseScore: false,
+    text: 'In the last month, how often have you felt confident about your ability to handle your personal problems?',
+    reverseScore: true,
   },
   {
     id: 5,
-    text: "During the past month, how often have you felt that things you were doing were interfering with your life?",
-    reverseScore: false,
+    text: 'In the last month, how often have you felt that things were going your way?',
+    reverseScore: true,
   },
   {
     id: 6,
-    text: "During the past month, how often have you felt like everything you did was an effort?",
+    text: 'In the last month, how often have you found that you could not cope with all the things that you had to do?',
     reverseScore: false,
   },
   {
     id: 7,
-    text: "During the past month, how often have you felt upset because of something that happened fairly soon?",
-    reverseScore: false,
+    text: 'In the last month, how often have you been able to control irritations in your life?',
+    reverseScore: true,
   },
   {
     id: 8,
-    text: "During the past month, how often have you felt restless?",
-    reverseScore: false,
+    text: 'In the last month, how often have you felt that you were on top of things?',
+    reverseScore: true,
   },
   {
     id: 9,
-    text: "During the past month, how often have you felt confused about something?",
+    text: 'In the last month, how often have you been angered because of things that happened that were outside of your control?',
     reverseScore: false,
   },
   {
     id: 10,
-    text: "During the past month, how often have you felt that you could not cope with all the things that you had to do?",
+    text: 'In the last month, how often have you felt difficulties were piling up so high that you could not overcome them?',
     reverseScore: false,
   },
-];
+] as const;
 
 export const pssOptions = [
-  { value: 0, label: 'Strongly disagree', points: 0 },
-  { value: 1, label: 'Disagree', points: 1 },
-  { value: 2, label: 'Agree', points: 2 },
-  { value: 3, label: 'Strongly agree', points: 3 },
-];
+  { value: 0, label: 'Never', points: 0 },
+  { value: 1, label: 'Almost never', points: 1 },
+  { value: 2, label: 'Sometimes', points: 2 },
+  { value: 3, label: 'Fairly often', points: 3 },
+  { value: 4, label: 'Very often', points: 4 },
+] as const;
 
-// Initialize with all answers at value 0 (Strongly disagree)
-export const initialAnswers = pssQuestions.map((q) => ({
-  questionId: q.id,
+export const initialAnswers: PSSAnswer[] = pssQuestions.map((question) => ({
+  questionId: question.id,
   answerValue: 0,
 }));
 
-// Calculate raw score (sum of points)
-export function calculateScore(answers: any[]): number {
-  return answers.reduce((sum, answer) => sum + answer.answerValue, 0);
+function getQuestionById(questionId: number) {
+  return pssQuestions.find((question) => question.id === questionId);
 }
 
-// PSS-10 scoring: 0-40 scale, typically categorized as:
-// 0-10: Low stress
-// 11-25: Moderate stress
-// 26-40: High stress
+export function scoreAnswer(answer: PSSAnswer): number {
+  const question = getQuestionById(answer.questionId);
+  if (!question) {
+    return answer.answerValue;
+  }
+
+  return question.reverseScore ? 4 - answer.answerValue : answer.answerValue;
+}
+
+export function calculateScore(answers: PSSAnswer[]): number {
+  return answers.reduce((sum, answer) => sum + scoreAnswer(answer), 0);
+}
+
 export function categorizeScore(score: number): string {
-  if (score <= 10) return 'Low Stress';
-  if (score <= 25) return 'Moderate Stress';
+  if (score <= 13) return 'Low Stress';
+  if (score <= 26) return 'Moderate Stress';
   return 'High Stress';
 }

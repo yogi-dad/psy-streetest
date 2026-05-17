@@ -1,19 +1,20 @@
 import { useState } from 'react';
-import { pssQuestions, pssOptions } from '../../constants/pssQuestions';
+import { calculateScore, categorizeScore, pssQuestions, pssOptions } from '../../constants/pssQuestions';
+import type { PSSAnswer } from '../../types/pss';
 
-type Answer = {
+type DraftAnswer = {
   questionId: number;
   answerValue: number | null;
 };
 
 type PssFormProps = {
-  onFormComplete: (score: number, answers: Answer[]) => Promise<void> | void;
+  onFormComplete: (score: number, answers: PSSAnswer[]) => Promise<void> | void;
   isSubmitting?: boolean;
 };
 
 export function PssForm({ onFormComplete, isSubmitting = false }: PssFormProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Answer[]>(
+  const [answers, setAnswers] = useState<DraftAnswer[]>(
     pssQuestions.map((q) => ({
       questionId: q.id,
       answerValue: null,
@@ -23,7 +24,8 @@ export function PssForm({ onFormComplete, isSubmitting = false }: PssFormProps) 
   const currentQuestion = pssQuestions[currentQuestionIndex];
   const currentAnswer = answers.find((a) => a.questionId === currentQuestion.id)?.answerValue ?? null;
   const completedCount = answers.filter((a) => a.answerValue !== null).length;
-  const totalScore = answers.reduce((sum, a) => sum + (a.answerValue ?? 0), 0);
+  const scoredAnswers = answers.filter((answer): answer is PSSAnswer => answer.answerValue !== null);
+  const totalScore = calculateScore(scoredAnswers);
   const isAllAnswered = completedCount === pssQuestions.length;
   const isLastQuestion = currentQuestionIndex === pssQuestions.length - 1;
 
@@ -54,12 +56,13 @@ export function PssForm({ onFormComplete, isSubmitting = false }: PssFormProps) 
       return;
     }
 
-    onFormComplete(totalScore, answers);
+    onFormComplete(totalScore, scoredAnswers);
   };
 
   const progress = ((currentQuestionIndex + 1) / pssQuestions.length) * 100;
-  const stressLevel = totalScore <= 10 ? 'Low' : totalScore <= 25 ? 'Moderate' : 'High';
-  const stressColor = totalScore <= 10 ? 'emerald' : totalScore <= 25 ? 'amber' : 'rose';
+  const stressCategory = categorizeScore(totalScore);
+  const stressLevel = stressCategory.replace(' Stress', '');
+  const stressColor = stressCategory === 'Low Stress' ? 'emerald' : stressCategory === 'Moderate Stress' ? 'amber' : 'rose';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-4">

@@ -4,23 +4,27 @@ import { getAnswerFromOption, formatScoreDisplay, getCategoryLabel } from './pss
 describe('PSS Scoring Utilities', () => {
   describe('getAnswerFromOption', () => {
     it('returns correct label for value 0', () => {
-      expect(getAnswerFromOption(0)).toBe('Strongly disagree');
+      expect(getAnswerFromOption(0)).toBe('Never');
     });
 
     it('returns correct label for value 1', () => {
-      expect(getAnswerFromOption(1)).toBe('Disagree');
+      expect(getAnswerFromOption(1)).toBe('Almost never');
     });
 
     it('returns correct label for value 2', () => {
-      expect(getAnswerFromOption(2)).toBe('Agree');
+      expect(getAnswerFromOption(2)).toBe('Sometimes');
     });
 
     it('returns correct label for value 3', () => {
-      expect(getAnswerFromOption(3)).toBe('Strongly agree');
+      expect(getAnswerFromOption(3)).toBe('Fairly often');
     });
 
-    it('returns "Strongly disagree" for invalid value', () => {
-      expect(getAnswerFromOption(-1)).toBe('Strongly disagree');
+    it('returns correct label for value 4', () => {
+      expect(getAnswerFromOption(4)).toBe('Very often');
+    });
+
+    it('returns "Never" for invalid value', () => {
+      expect(getAnswerFromOption(-1)).toBe('Never');
     });
   });
 
@@ -47,20 +51,20 @@ describe('PSS Scoring Utilities', () => {
   });
 
   describe('getCategoryLabel', () => {
-    it('returns Low Stress for score 0-10', () => {
-      expect(getCategoryLabel(10)).toBe('Low Stress');
+    it('returns Low Stress for score 0-13', () => {
+      expect(getCategoryLabel(13)).toBe('Low Stress');
       expect(getCategoryLabel(5)).toBe('Low Stress');
       expect(getCategoryLabel(0)).toBe('Low Stress');
     });
 
-    it('returns Moderate Stress for score 11-25', () => {
-      expect(getCategoryLabel(11)).toBe('Moderate Stress');
-      expect(getCategoryLabel(25)).toBe('Moderate Stress');
+    it('returns Moderate Stress for score 14-26', () => {
+      expect(getCategoryLabel(14)).toBe('Moderate Stress');
+      expect(getCategoryLabel(26)).toBe('Moderate Stress');
       expect(getCategoryLabel(18)).toBe('Moderate Stress');
     });
 
-    it('returns High Stress for score 26-40', () => {
-      expect(getCategoryLabel(26)).toBe('High Stress');
+    it('returns High Stress for score 27-40', () => {
+      expect(getCategoryLabel(27)).toBe('High Stress');
       expect(getCategoryLabel(40)).toBe('High Stress');
       expect(getCategoryLabel(35)).toBe('High Stress');
     });

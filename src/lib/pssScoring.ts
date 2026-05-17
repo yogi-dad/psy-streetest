@@ -1,7 +1,13 @@
 // Remove unused imports
 
 export function getAnswerFromOption(value: number) {
-  return Object.values({ 0: 'Strongly disagree', 1: 'Disagree', 2: 'Agree', 3: 'Strongly agree' })[value];
+  return Object.values({
+    0: 'Never',
+    1: 'Almost never',
+    2: 'Sometimes',
+    3: 'Fairly often',
+    4: 'Very often',
+  })[value] ?? 'Never';
 }
 
 export function formatScoreDisplay(score: number, total: number): string {
@@ -10,8 +16,8 @@ export function formatScoreDisplay(score: number, total: number): string {
 }
 
 export function getCategoryLabel(score: number): string {
-  if (score <= 10) return 'Low Stress';
-  if (score <= 25) return 'Moderate Stress';
+  if (score <= 13) return 'Low Stress';
+  if (score <= 26) return 'Moderate Stress';
   return 'High Stress';
 }
 

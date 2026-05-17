@@ -1,16 +1,15 @@
 # Perceived Stress Scale (PSS-10) React Assessment App
 
-A secure React application for administering the Perceived Stress Scale assessment with Firebase authentication and Netlify Functions backend.
+A React application for administering the standard PSS-10 assessment with demographic intake and direct Google Apps Script submission.
 
 ## Features
 
-- User authentication via Firebase
-- PSS-10 questionnaire with 10 items
-- Real-time score calculation
-- Secure submission via Netlify Functions
-- Firebase token verification
+- Standard PSS-10 questionnaire with reverse scoring
+- Demographic intake before the survey starts
+- One-submission-per-email guard on the current device
+- Direct submission to Google Apps Script
 - Google Sheets integration
-- Email notifications
+- Optional email notifications from the script
 
 ## Getting Started
 
@@ -18,8 +17,6 @@ A secure React application for administering the Perceived Stress Scale assessme
 
 - [Node.js](https://nodejs.org/) (v18+)
 - [npm](https://www.npmjs.com/) or [pnpm](https://pnpm.io/)
-- [Firebase Account](https://firebase.google.com/)
-- [Netlify Account](https://netlify.com/)
 - [Google Sheets](https://sheets.google.com/)
 
 ### Installation
@@ -38,35 +35,21 @@ A secure React application for administering the Perceived Stress Scale assessme
    ```bash
    cp .env.example .env
    ```
-   
-   Edit `.env` with your Firebase, Google Sheets, and email configuration.
+
+   Edit `.env` with `VITE_GOOGLE_APPS_SCRIPT_URL`.
 
 4. **Start development server**
    ```bash
    npm run dev
    ```
 
-### Firebase Setup
-
-1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Email/Password authentication
-3. Copy your Firebase configuration to `.env`
-4. Download Firebase Admin SDK for use in Netlify Functions
-
-### Netlify Setup
-
-1. Deploy to Netlify
-2. Create functions in `/netlify/functions/`
-3. Set environment variables in Netlify dashboard
-4. Enable Netlify Functions in site settings
-
 ### Google Sheets Setup
 
 1. Create a Google Sheet
-2. Enable API access
-3. Create a service account
-4. Share sheet with service account email
-5. Store credentials in Netlify Functions (NOT in frontend)
+2. Create and deploy a Google Apps Script web app
+3. Connect the script to the target sheet
+4. Configure any optional email or reporting logic inside the script
+5. Set `VITE_GOOGLE_APPS_SCRIPT_URL` in `.env`
 
 ### Available Scripts
 
@@ -74,10 +57,11 @@ A secure React application for administering the Perceived Stress Scale assessme
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
+- `npm test -- --run` - Run tests once
 
 ## Project Structure
 
-```
+```text
 pss-assessment-app/
   src/
     components/
@@ -88,25 +72,25 @@ pss-assessment-app/
     lib/
     pages/
     types/
-  netlify/
-    functions/
 ```
 
-## Security
+## Submission Model
 
-- Frontend never exposes secrets
-- Firebase token verification in Netlify Functions
-- Server-side score recalculation
-- Secure email sending via Netlify Functions
+- The frontend collects full name, email, age, gender, location, and occupation before the survey starts.
+- The browser blocks repeated submissions from the same email on the same device using local storage.
+- The frontend sends the demographic and assessment payload directly to a Google Apps Script web app.
+- The request uses browser `fetch()` with `no-cors`, so the UI can confirm that the request was sent but cannot inspect the final script response.
+- Any sheet writes, duplicate checks across devices, follow-up processing, or emails must happen inside Google Apps Script.
 
 ## PSS-10 Scoring
 
-- 10 questions, each scored 0-3
+- 10 questions, each scored 0-4
+- Questions 4, 5, 7, and 8 are reverse scored
 - Total score: 0-40
 - Categories:
-  - 0-10: Low Stress
-  - 11-25: Moderate Stress
-  - 26-40: High Stress
+  - 0-13: Low Stress
+  - 14-26: Moderate Stress
+  - 27-40: High Stress
 
 ## License
 
