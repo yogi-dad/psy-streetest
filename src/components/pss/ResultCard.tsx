@@ -122,7 +122,7 @@ export function ResultCard({ score }: ResultCardProps) {
           <p className="text-xs text-gray-600 leading-relaxed">
             <strong>Disclaimer:</strong> The Perceived Stress Scale (PSS-10) is a self-assessment tool for personal understanding only.
             It is not a diagnostic tool and should not replace professional medical or psychological evaluation. If you are experiencing
-            significant stress or mental health concerns, please consult with a qualified healthcare professional.
+            significant stress or mental health concerns, please consult with your plant psychologist.
           </p>
         </div>
 

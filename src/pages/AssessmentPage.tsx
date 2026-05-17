@@ -332,7 +332,7 @@ export function AssessmentPage() {
                 </label>
 
                 <label htmlFor="location" className="block text-sm font-semibold text-gray-900">
-                  Location
+                  Location/Plant
                   <input
                     id="location"
                     required
