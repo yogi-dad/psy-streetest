@@ -21,7 +21,7 @@ describe('submitAssessmentToGoogleScript', () => {
         age: '29',
         gender: 'Female',
         location: 'Mumbai',
-        occupation: 'Engineer',
+        employeeId: 'EMP-123',
       },
       12,
       []
@@ -47,7 +47,7 @@ describe('submitAssessmentToGoogleScript', () => {
         age: '29',
         gender: 'Female',
         location: 'Mumbai',
-        occupation: 'Engineer',
+        employeeId: 'EMP-123',
       },
       12,
       answers
@@ -73,7 +73,7 @@ describe('submitAssessmentToGoogleScript', () => {
         age: '29',
         gender: 'Female',
         location: 'Mumbai',
-        occupation: 'Engineer',
+        employeeId: 'EMP-123',
         score: 12,
         answers,
       })
@@ -92,7 +92,7 @@ describe('submitAssessmentToGoogleScript', () => {
         age: '29',
         gender: 'Female',
         location: 'Mumbai',
-        occupation: 'Engineer',
+        employeeId: 'EMP-123',
       },
       12,
       []

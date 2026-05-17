@@ -25,7 +25,7 @@ describe('AssessmentPage', () => {
     await user.type(screen.getByRole('spinbutton', { name: /^Age/ }), '29');
     await user.selectOptions(screen.getByRole('combobox', { name: /^Gender/ }), 'Female');
     await user.type(screen.getByRole('textbox', { name: /^Location/ }), 'Mumbai');
-    await user.type(screen.getByRole('textbox', { name: /^Occupation/ }), 'Engineer');
+    await user.type(screen.getByRole('textbox', { name: /^Employee ID/ }), 'EMP-123');
   }
 
   async function startSurvey(user: ReturnType<typeof userEvent.setup>, email = 'test@example.com') {
@@ -48,7 +48,7 @@ describe('AssessmentPage', () => {
     expect(screen.getByText('Enter your age in whole years. Allowed range: 18 to 80.')).toBeInTheDocument();
     expect(screen.getByText('Select the option that best represents you.')).toBeInTheDocument();
     expect(screen.getByText('Enter your current city, region, or country.')).toBeInTheDocument();
-    expect(screen.getByText('Enter your current profession, role, or primary occupation.')).toBeInTheDocument();
+    expect(screen.getByText('Enter your employee ID exactly as assigned by your organization.')).toBeInTheDocument();
   });
 
   it('enables the start button only when the form is valid', async () => {
@@ -179,7 +179,7 @@ describe('AssessmentPage', () => {
         age: '29',
         gender: 'Female',
         location: 'Mumbai',
-        occupation: 'Engineer',
+        employeeId: 'EMP-123',
       },
       20,
       expect.any(Array)

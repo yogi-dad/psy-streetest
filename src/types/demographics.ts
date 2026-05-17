@@ -4,5 +4,5 @@ export interface Demographics {
   age: string;
   gender: string;
   location: string;
-  occupation: string;
+  employeeId: string;
 }

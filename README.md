@@ -76,7 +76,7 @@ pss-assessment-app/
 
 ## Submission Model
 
-- The frontend collects full name, email, age, gender, location, and occupation before the survey starts.
+- The frontend collects full name, email, age, gender, location, and employee ID before the survey starts.
 - The browser blocks repeated submissions from the same email on the same device using local storage.
 - The frontend sends the demographic and assessment payload directly to a Google Apps Script web app.
 - The request uses browser `fetch()` with `no-cors`, so the UI can confirm that the request was sent but cannot inspect the final script response.

@@ -57,7 +57,7 @@ function doPost(e) {
       'age',
       'gender',
       'location',
-      'occupation',
+      'employeeId',
       'answers',
       'score',
     ];
@@ -109,7 +109,7 @@ function doPost(e) {
       data.age,
       data.gender,
       data.location,
-      data.occupation,
+      data.employeeId,
       score,
       stressLevel,
       JSON.stringify(data.answers),
@@ -130,7 +130,7 @@ function doPost(e) {
       age: data.age,
       gender: data.gender,
       location: data.location,
-      occupation: data.occupation,
+      employeeId: data.employeeId,
       score: score,
       stressLevel: stressLevel,
       submittedAt: submittedAt,
@@ -171,7 +171,7 @@ function ensureHeaderRow(sheet) {
     'Age',
     'Gender',
     'Location',
-    'Occupation',
+    'Employee ID',
     'Score',
     'Stress Level',
     'Answers',
@@ -326,7 +326,7 @@ function sendAdminNotification(params) {
       'Age: ' + params.age + '\n' +
       'Gender: ' + params.gender + '\n' +
       'Location: ' + params.location + '\n' +
-      'Occupation: ' + params.occupation + '\n' +
+      'Employee ID: ' + params.employeeId + '\n' +
       'Score: ' + params.score + '/40\n' +
       'Stress Level: ' + params.stressLevel + '\n' +
       'Date: ' + params.submittedAt.toLocaleString() + '\n\n' +

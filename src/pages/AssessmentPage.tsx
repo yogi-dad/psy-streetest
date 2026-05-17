@@ -14,7 +14,7 @@ const emptyDemographics: Demographics = {
   age: '',
   gender: '',
   location: '',
-  occupation: '',
+  employeeId: '',
 };
 
 const genderOptions = [
@@ -30,7 +30,7 @@ const fieldHelperText: Record<keyof Demographics, string> = {
   age: 'Enter your age in whole years. Allowed range: 18 to 80.',
   gender: 'Select the option that best represents you.',
   location: 'Enter your current city, region, or country.',
-  occupation: 'Enter your current profession, role, or primary occupation.',
+  employeeId: 'Enter your employee ID exactly as assigned by your organization.',
 };
 
 type DemographicFieldErrors = Partial<Record<keyof Demographics, string>>;
@@ -42,7 +42,7 @@ const emptyTouchedState: DemographicFieldTouched = {
   age: false,
   gender: false,
   location: false,
-  occupation: false,
+  employeeId: false,
 };
 
 function normalizeEmail(email: string) {
@@ -110,8 +110,8 @@ function validateDemographics(demographics: Demographics): DemographicFieldError
     errors.location = 'Enter your current location.';
   }
 
-  if (!demographics.occupation.trim()) {
-    errors.occupation = 'Enter your occupation.';
+  if (!demographics.employeeId.trim()) {
+    errors.employeeId = 'Enter your employee ID.';
   }
 
   return errors;
@@ -154,7 +154,7 @@ export function AssessmentPage() {
       age: true,
       gender: true,
       location: true,
-      occupation: true,
+      employeeId: true,
     });
 
     if (!isFormValid) {
@@ -350,22 +350,22 @@ export function AssessmentPage() {
                   </p>
                 </label>
 
-                <label htmlFor="occupation" className="block text-sm font-semibold text-gray-900">
-                  Occupation
+                <label htmlFor="employeeId" className="block text-sm font-semibold text-gray-900">
+                  Employee ID
                   <input
-                    id="occupation"
+                    id="employeeId"
                     required
-                    value={demographics.occupation}
-                    onChange={(event) => handleDemographicsChange('occupation', event.target.value)}
-                    onBlur={() => handleFieldBlur('occupation')}
+                    value={demographics.employeeId}
+                    onChange={(event) => handleDemographicsChange('employeeId', event.target.value)}
+                    onBlur={() => handleFieldBlur('employeeId')}
                     className={`mt-2 w-full rounded-xl border-2 px-4 py-3 font-medium transition focus:outline-none focus:ring-2 ${
-                      touched.occupation && fieldErrors.occupation
+                      touched.employeeId && fieldErrors.employeeId
                         ? 'border-red-300 focus:border-red-400 focus:ring-red-100'
                         : 'border-gray-200 focus:border-primary-500 focus:ring-primary-200'
                     }`}
                   />
-                  <p className={`mt-2 text-xs ${touched.occupation && fieldErrors.occupation ? 'text-red-700' : 'text-gray-500'}`}>
-                    {touched.occupation && fieldErrors.occupation ? fieldErrors.occupation : fieldHelperText.occupation}
+                  <p className={`mt-2 text-xs ${touched.employeeId && fieldErrors.employeeId ? 'text-red-700' : 'text-gray-500'}`}>
+                    {touched.employeeId && fieldErrors.employeeId ? fieldErrors.employeeId : fieldHelperText.employeeId}
                   </p>
                 </label>
               </div>
