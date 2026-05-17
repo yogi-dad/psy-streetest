@@ -230,7 +230,7 @@ export function AssessmentPage() {
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">Participant Details</h2>
               <p className="mt-2 text-sm text-gray-600">
-                Enter your demographic details to begin the Perceived Stress Scale survey. Only one submission is allowed per email address on this device.
+                Enter your demographic details to begin the Perceived survey.
               </p>
             </div>
 
